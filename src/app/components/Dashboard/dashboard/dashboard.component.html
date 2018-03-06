@@ -1,0 +1,105 @@
+<div layout="column">
+
+  <!-- FILMES -->
+  <div flex>
+    <mat-toolbar-row flex class="main"> <button mat-button routerLink="/popular/1"><h1>Mais assistidos</h1></button></mat-toolbar-row>
+  </div>
+
+  <mat-grid-list flex cols="4" gutterSize="5px" rowHeight="470px" *ngIf="popularMovies">
+    <mat-grid-tile *ngFor="let movie of popularMovies" matTooltip="{{movie.overview}}" [matTooltipPosition]="position">
+      <mat-card class="movie">
+
+        <!-- Poster Image -->
+        <div *ngIf="movie.poster_path; then truePoster else falsePoster"></div>
+
+        <ng-template #truePoster>
+          <img mat-card-image routerLink="/movie/{{movie.id}}" src="{{url_image}}{{movie.poster_path}}">
+        </ng-template>
+
+        <ng-template #falsePoster>
+          <img mat-card-image routerLink="/movie/{{movie.id}}" src="assets/no-poster.jpg">
+        </ng-template>
+
+      </mat-card>
+
+      <!-- Titulo filmes -->
+      <mat-grid-tile-footer>{{movie.title}}</mat-grid-tile-footer>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <button mat-button routerLink="/popular/1"><h2>ver mais...</h2></button>
+
+  <mat-divider class="division"></mat-divider>
+
+
+  <!-- TV SHOWS -->
+  <div flex>
+    <mat-toolbar-row flex class="main"> <button mat-button routerLink="/tv_popular/1"><h1>Series</h1></button></mat-toolbar-row>
+  </div>
+
+  <mat-grid-list flex cols="4" gutterSize="5px" rowHeight="470px" *ngIf="popularTvShows">
+    <mat-grid-tile *ngFor="let show of popularTvShows" matTooltip="{{show.overview}}" [matTooltipPosition]="position">
+      <mat-card class="show">
+
+        <!-- Poster Image -->
+        <div *ngIf="show.poster_path; then posterTrue else posterFalse"></div>
+
+        <ng-template #posterTrue>
+          <img mat-card-image
+               routerLink="/tv_show/{{show.id}}" src="{{url_image}}{{show.poster_path}}">
+        </ng-template>
+
+        <ng-template #posterFalse>
+          <img mat-card-image
+               routerLink="/tv_show/{{show.id}}" src="assets/no-poster.jpg">
+        </ng-template>
+
+      </mat-card>
+
+      <!-- Nome Tv Show -->
+      <mat-grid-tile-footer>{{show.name}}</mat-grid-tile-footer>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <button mat-button routerLink="/tv_popular/1"><h2>ver mais...</h2></button>
+
+  <mat-divider class="division"></mat-divider>
+
+
+  <!-- Artistas -->
+  <div flex>
+    <mat-toolbar-row flex class="main"> <button mat-button routerLink="/people/1"><h1>Artistas</h1></button></mat-toolbar-row>
+  </div>
+
+  <mat-grid-list flex cols="4" gutterSize="5px" rowHeight="400px" *ngIf="popularPeople">
+    <mat-grid-tile *ngFor="let person of popularPeople">
+      <mat-card class="person">
+
+        <!-- Profile Image -->
+        <div *ngIf="person.profile_path; then profileTrue else profileFalse"></div>
+
+        <ng-template #profileTrue>
+          <img mat-card-image
+               routerLink="/person/{{person.id}}" src="{{url_image}}{{person.profile_path}}">
+        </ng-template>
+
+        <ng-template #profileFalse>
+          <img mat-card-image
+               routerLink="/person/{{person.id}}" src="assets/no_avatar.png">
+        </ng-template>
+
+      </mat-card>
+
+      <!-- Nome pessoal -->
+      <mat-grid-tile-footer>{{person.name}}</mat-grid-tile-footer>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <button mat-button routerLink="/people/1"><h2>ver mais...</h2></button>
+
+  <mat-divider class="division"></mat-divider>
+
+  <app-footer></app-footer>
+
+  <app-genre></app-genre>
+</div>

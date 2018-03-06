@@ -1,0 +1,118 @@
+<div layout="column">
+
+  <!-- Titulo resultado -->
+  <div flex>
+    <h1> Resultado {{query}}:</h1>
+  </div>
+
+  <mat-tab-group class="detailTab" *ngIf="results">
+
+    <!-- Resulado Filmes-->
+    <mat-tab label="Filmes">
+
+      <!-- Subtitulo filmes -->
+      <div flex>
+        <h2>"{{query}}" em filmes <small>(Page: {{page}})</small></h2>
+      </div>
+
+      <!-- Filmes -->
+      <mat-grid-list cols="4" gutterSize="5px" rowHeight="470px" *ngIf="movies.length > 0">
+        <mat-grid-tile *ngFor="let movie of movies" matTooltip="{{movie.overview}}" [matTooltipPosition]="position">
+          <mat-card class="movie">
+
+            <!-- Imagem Poster -->
+            <div *ngIf="movie.poster_path; then truePoster else falsePoster"></div>
+
+            <ng-template #truePoster>
+              <img mat-card-image routerLink="/movie/{{movie.id}}" src="{{url_image}}{{movie.poster_path}}">
+            </ng-template>
+
+            <ng-template #falsePoster>
+              <img mat-card-image routerLink="/movie/{{movie.id}}" src="assets/no-poster.jpg">
+            </ng-template>
+
+          </mat-card>
+
+          <!-- Titulo filme -->
+          <mat-grid-tile-footer>{{movie.title}}</mat-grid-tile-footer>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </mat-tab>
+
+    <!-- Resultado Series -->
+    <mat-tab label="Series">
+
+      <!-- Subtitulo series -->
+      <div flex>
+        <h2>"{{query}}" em series <small>(Page: {{page}})</small></h2>
+      </div>
+
+      <!-- Series -->
+      <mat-grid-list cols="4" gutterSize="5px" rowHeight="470px" *ngIf="tv.length > 0">
+        <mat-grid-tile *ngFor="let show of tv" matTooltip="{{show.overview}}" [matTooltipPosition]="position">
+          <mat-card class="show">
+
+            <!-- Imagem Poster -->
+            <div *ngIf="show.poster_path; then posterTrue else posterFalse"></div>
+
+            <ng-template #posterTrue>
+              <img mat-card-image
+                   routerLink="/tv_show/{{show.id}}" src="{{url_image}}{{show.poster_path}}">
+            </ng-template>
+
+            <ng-template #posterFalse>
+              <img mat-card-image
+                   routerLink="/tv_show/{{show.id}}" src="assets/no-poster.jpg">
+            </ng-template>
+
+          </mat-card>
+
+          <mat-grid-tile-footer>{{show.title}}</mat-grid-tile-footer>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </mat-tab>
+
+    <!-- Resultado Artistas -->
+    <mat-tab label="Artistas">
+
+      <!-- Subtitulo Artista -->
+      <div flex>
+        <h2>"{{query}}" em artistas <small>(Page: {{page}})</small></h2>
+      </div>
+
+      <!-- Artista -->
+      <mat-grid-list cols="4" gutterSize="5px" rowHeight="390px" *ngIf="people.length > 0">
+        <mat-grid-tile *ngFor="let person of people">
+          <mat-card class="person">
+
+            <!-- Imagem poster -->
+            <div *ngIf="person.profile_path; then profileTrue else profileFalse"></div>
+
+            <ng-template #profileTrue>
+              <img mat-card-image
+                   routerLink="/person/{{person.id}}" src="{{url_image}}{{person.profile_path}}">
+            </ng-template>
+
+            <ng-template #profileFalse>
+              <img mat-card-image
+                   routerLink="/person/{{person.id}}" src="assets/no_avatar.png">
+            </ng-template>
+
+          </mat-card>
+
+          <!-- Nome pessoal -->
+          <mat-grid-tile-footer>{{person.name}}</mat-grid-tile-footer>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </mat-tab>
+  </mat-tab-group>
+
+  <!-- Paginacao -->
+  <td-paging-bar class="list" #pagingBarLinks pageLinkCount="5" [firstLast]="false" [initialPage]="page" [pageSize]="1" [total]="totalPages" (change)="changeLinks($event)">
+    <span hide-xs>{{pagingBarLinks.initialPage}} of {{pagingBarLinks.total}}</span>
+  </td-paging-bar>
+
+<!-- Rodape -->
+<app-footer></app-footer>
+
+</div>

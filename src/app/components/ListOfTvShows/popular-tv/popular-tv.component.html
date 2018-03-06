@@ -1,0 +1,35 @@
+<div flex>
+  <mat-toolbar-row flex class="main"><h1>Popular Series</h1></mat-toolbar-row>
+</div>
+
+<mat-grid-list cols="4" gutterSize="5px" rowHeight="470px" *ngIf="popular">
+  <mat-grid-tile *ngFor="let show of popular" matTooltip="{{show.overview}}" [matTooltipPosition]="position">
+    <mat-card class="show">
+
+      <!-- Poster Image -->
+      <div *ngIf="show.poster_path; then posterTrue else posterFalse"></div>
+
+      <ng-template #posterTrue>
+        <img mat-card-image
+             routerLink="/tv_show/{{show.id}}" src="{{url_image}}{{show.poster_path}}">
+      </ng-template>
+
+      <ng-template #posterFalse>
+        <img mat-card-image
+             routerLink="/tv_show/{{show.id}}" src="assets/no-poster.jpg">
+      </ng-template>
+
+    </mat-card>
+
+    <!-- Nome Serie -->
+    <mat-grid-tile-footer>{{show.name}}</mat-grid-tile-footer>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<!-- Paginacao -->
+<td-paging-bar class="list" #pagingBarLinks pageLinkCount="5" [firstLast]="false" [initialPage]="page" [pageSize]="1" [total]="totalPages" (change)="changeLinks($event)">
+  <span hide-xs>{{pagingBarLinks.initialPage}} of {{pagingBarLinks.total}}</span>
+</td-paging-bar>
+
+<!-- Rodape -->
+<app-footer></app-footer>

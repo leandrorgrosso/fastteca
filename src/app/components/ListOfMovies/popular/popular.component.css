@@ -1,0 +1,26 @@
+.movie {
+  background-color: #e0e0e0;
+}
+
+.main {
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.movie img{
+  cursor: pointer;
+  -webkit-transition: all 1s ease;
+  -moz-transition: all 1s ease;
+  -o-transition: all 1s ease;
+  -ms-transition: all 1s ease;
+  transition: all 1s ease;
+}
+
+.movie img:hover{
+  width: 110%;
+  height: 110%;
+}
+
+.list{
+  color: black;
+}

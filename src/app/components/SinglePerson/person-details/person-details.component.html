@@ -1,0 +1,312 @@
+<mat-tab-group *ngIf="person">
+
+  <!-- Tab para detalhes gerais da pessoa -->
+  <mat-tab label="Geral">
+    <div class="custom">
+      <div class="single">
+        <section class="images">
+          <div class="poster">
+            <div class="image_content">
+
+              <!-- Imagem de perfil -->
+              <div *ngIf="person.profile_path; then profileTrue else profileFalse"></div>
+
+              <ng-template #profileTrue>
+                <img class="image" src="{{url_image_poster}}{{person.profile_path}}">
+              </ng-template>
+
+              <ng-template #profileFalse>
+                <img class="image" src="assets/no_avatar.png">
+              </ng-template>
+
+            </div>
+          </div>
+          <div class="header">
+            <section class="info">
+              <div class="movieTitle">
+                <span>
+                  <h2>{{person.name}}</h2>
+                </span>
+              </div>
+              <div class="biography">
+                <h3>Biografia</h3>
+
+                <!-- Condicional quando as api não retornam a biografia -->
+                <div *ngIf="person.biography.length == 0; then noBiography else biography"></div>
+
+                <ng-template #noBiography>
+                  <p>Nenhuma biografia</p>
+                </ng-template>
+
+                <ng-template #biography>
+
+                  <!-- Condicional quando o comprimento da biografia é mais de 250 caracteres -->
+                  <div *ngIf="biographylength(person.biography.length); then bioTrue else bioFalse"></div>
+
+                  <!-- Truncated biography -->
+                  <ng-template #bioTrue>
+                    <div>
+                      <p>{{person.biography | truncate:250}}<button mat-button  (click)="openDialog()">Veja mais...</button></p>
+                    </div>
+                  </ng-template>
+
+                  <!-- Biografia completa -->
+                  <ng-template #bioFalse>
+                    <p>{{person.biography}}</p>
+                  </ng-template>
+                </ng-template>
+
+                <ul class="icons">
+                  <li class="single_icon" *ngIf="person.gender != 0">
+                    <div><mat-icon>people</mat-icon></div>
+                    <div class="text">Gênero</div>
+                    <div>
+                      : {{gender(person.gender)}}
+                    </div>
+                  </li>
+                  <li class="single_icon" *ngIf="person.place_of_birth">
+                    <div><mat-icon>map</mat-icon></div>
+                    <div class="text">Nascimento</div>
+                    <div>
+                      : {{person.place_of_birth}}
+                    </div>
+                  </li>
+                </ul>
+                <ul class="icons">
+                  <div *ngIf="person.deathday; then personDead else personAlive"></div>
+
+                  <!-- Se a pessoa está morta, a idade é calculada quando ele morreu -->
+                  <ng-template #personDead>
+                    <li class="single_icon" *ngIf="person.birthday">
+                      <div><mat-icon>event</mat-icon></div>
+                      <div class="text">Aniversário</div>
+                      <div>: </div>
+                      <div class="text"> {{person.birthday }}</div>
+                    </li>
+                    <li class="single_icon" *ngIf="person.deathday">
+                      <div><mat-icon>event</mat-icon></div>
+                      <div class="text">Falecimento</div>
+                      <div>: </div>
+                      <div class="text"> {{person.deathday}}
+                        <small>({{age(person.birthday | timeDifference: person.deathday  | slice:0:8)}} Idade)</small></div>
+                    </li>
+                  </ng-template>
+
+                  <!-- Se a pessoa estiver viva, sua idade é mostrada -->
+                  <ng-template #personAlive>
+                    <li class="single_icon" *ngIf="person.birthday">
+                      <div><mat-icon>event</mat-icon></div>
+                      <div class="text">Aniversário</div>
+                      <div>: </div>
+                      <div class="text"> {{person.birthday }}
+                        <small>({{person.birthday | timeAgo | slice:0:8}} old)</small></div>
+                    </li>
+                  </ng-template>
+
+                  <li class="single_icon" *ngIf="person.homepage">
+                    <div><mat-icon>home</mat-icon></div>
+                    <div class="text">Home <br>Page</div>
+                    <div>
+                      : <a href="{{person.homepage}}">Pagina Official</a>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </div>
+  </mat-tab>
+
+  <!-- Tab for movies and television shows in which the person plays a role -->
+  <mat-tab label="Elenco" *ngIf="person.movie_credits.cast.length > 0 || person.tv_credits.cast.length > 0">
+
+    <div layout="column">
+
+      <!-- For movies -->
+      <div flex *ngIf="person.movie_credits.cast.length > 0">
+        <mat-toolbar-row flex class="main"><h1>Filmes</h1></mat-toolbar-row>
+      </div>
+
+      <!-- Movies -->
+      <mat-grid-list flex cols="4" gutterSize="5px" rowHeight="470px" *ngIf="person.movie_credits.cast.length > 0">
+        <mat-grid-tile flex *ngFor="let movie of person.movie_credits.cast"  matTooltip="{{movie.overview}}"
+                       [matTooltipPosition]="position">
+          <mat-card class="movie">
+
+            <!-- Poster Image -->
+            <div *ngIf="movie.poster_path; then mcasttruePoster else mcastfalsePoster"></div>
+
+            <ng-template #mcasttruePoster>
+              <img mat-card-image
+                   routerLink="/movie/{{movie.id}}" src="{{url_image_poster}}{{movie.poster_path}}">
+            </ng-template>
+
+            <ng-template #mcastfalsePoster>
+              <img mat-card-image routerLink="/movie/{{movie.id}}" src="assets/no-poster.jpg">
+            </ng-template>
+
+
+          </mat-card>
+
+          <!-- Conditional for character interpreted by the person -->
+          <div *ngIf="movie.character && movie.character.length > 0; then mcharTrue else mcharFalse"></div>
+
+          <ng-template #mcharTrue>
+            <mat-grid-tile-footer>{{movie.title}} <br> like {{movie.character}}</mat-grid-tile-footer>
+          </ng-template>
+
+          <ng-template #mcharFalse>
+            <mat-grid-tile-footer>{{movie.title}}</mat-grid-tile-footer>
+          </ng-template>
+
+        </mat-grid-tile>
+      </mat-grid-list>
+
+
+      <!-- For tv shows -->
+      <div flex *ngIf="person.tv_credits.cast.length > 0">
+        <mat-toolbar-row flex class="main"><h1>Series</h1></mat-toolbar-row>
+      </div>
+
+      <!-- tv shows -->
+      <mat-grid-list flex cols="4" gutterSize="5px" rowHeight="470px" *ngIf="person.tv_credits.cast.length > 0">
+        <mat-grid-tile flex *ngFor="let show of person.tv_credits.cast" matTooltip="{{show.overview}}"
+                       [matTooltipPosition]="position">
+        <mat-card class="movie">
+
+            <!-- Poster Image -->
+            <div *ngIf="show.poster_path; then tvcasttruePoster else tvcastfalsePoster"></div>
+
+            <ng-template #tvcasttruePoster>
+              <img mat-card-image
+                   routerLink="/tv_show/{{show.id}}" src="{{url_image_poster}}{{show.poster_path}}">
+            </ng-template>
+
+            <ng-template #tvcastfalsePoster>
+              <img mat-card-image routerLink="/tv_show/{{show.id}}" src="assets/no-poster.jpg">
+            </ng-template>
+
+          </mat-card>
+
+          <!-- Conditional for character interpreted by the person -->
+          <div *ngIf="show.character && show.character.length > 0; then tvcharTrue else tvcharFalse"></div>
+
+          <ng-template #tvcharTrue>
+            <mat-grid-tile-footer>{{show.name}} <br> like {{show.character}}</mat-grid-tile-footer>
+          </ng-template>
+
+          <ng-template #tvcharFalse>
+            <mat-grid-tile-footer>{{show.name}}</mat-grid-tile-footer>
+          </ng-template>
+
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+
+  </mat-tab>
+
+  <!-- Tab for movies and television shows in which the person work in production -->
+  <mat-tab label="Equipe técnica" *ngIf="person.movie_credits.crew.length > 0 || person.tv_credits.crew.length > 0">
+
+    <div layout="column">
+
+      <!-- For movies-->
+      <div flex *ngIf="person.movie_credits.crew.length > 0">
+        <mat-toolbar-row flex class="main"><h1>Filmes</h1></mat-toolbar-row>
+      </div>
+
+      <!-- Movies -->
+      <mat-grid-list flex cols="4" gutterSize="5px" rowHeight="470px" *ngIf="person.movie_credits.crew.length > 0">
+        <mat-grid-tile *ngFor="let movie of person.movie_credits.crew"  matTooltip="{{movie.overview}}"
+                       [matTooltipPosition]="position">
+          <mat-card class="movie">
+
+            <!-- Poster Image -->
+            <div *ngIf="movie.poster_path; then mcrewtruePoster else mcrewfalsePoster"></div>
+
+            <ng-template #mcrewtruePoster>
+              <img mat-card-image
+                   routerLink="/movie/{{movie.id}}" src="{{url_image_poster}}{{movie.poster_path}}">
+            </ng-template>
+
+            <ng-template #mcrewfalsePoster>
+              <img mat-card-image routerLink="/movie/{{movie.id}}" src="assets/no-poster.jpg">
+            </ng-template>
+
+          </mat-card>
+
+          <!-- Conditional for the job done by the person -->
+          <div *ngIf="movie.job && movie.job.length > 0; then mjobTrue else mjobFalse"></div>
+
+          <ng-template #mjobTrue>
+            <mat-grid-tile-footer>{{movie.title}} <br> curtida {{movie.job}}</mat-grid-tile-footer>
+          </ng-template>
+
+          <ng-template #mjobFalse>
+            <mat-grid-tile-footer>{{movie.title}}</mat-grid-tile-footer>
+          </ng-template>
+
+        </mat-grid-tile>
+      </mat-grid-list>
+
+      <!-- For tv shows -->
+      <div flex *ngIf="person.tv_credits.crew.length > 0">
+        <mat-toolbar-row flex class="main"><h1>Series</h1></mat-toolbar-row>
+      </div>
+
+      <!-- Tv Shows -->
+      <mat-grid-list flex cols="4" gutterSize="5px" rowHeight="470px" *ngIf="person.tv_credits.crew.length > 0">
+        <mat-grid-tile *ngFor="let show of person.tv_credits.crew" matTooltip="{{show.overview}}"
+                       [matTooltipPosition]="position">
+          <mat-card class="movie">
+
+            <!-- Poster Image -->
+            <div *ngIf="show.poster_path; then tvcrewtruePoster else tvcrewfalsePoster"></div>
+
+            <ng-template #tvcrewtruePoster>
+              <img mat-card-image
+                   routerLink="/tv_show/{{show.id}}" src="{{url_image_poster}}{{show.poster_path}}">
+            </ng-template>
+
+            <ng-template #tvcrewfalsePoster>
+              <img mat-card-image routerLink="/tv_show/{{show.id}}" src="assets/no-poster.jpg">
+            </ng-template>
+
+          </mat-card>
+
+          <!-- Conditional for the job done by the person -->
+          <div *ngIf="show.job && show.job.length > 0; then mjobTrue else mjobFalse"></div>
+
+          <ng-template #mjobTrue>
+            <mat-grid-tile-footer>{{show.name}} <br> curtida {{show.job}}</mat-grid-tile-footer>
+          </ng-template>
+
+          <ng-template #mjobFalse>
+            <mat-grid-tile-footer>{{show.name}}</mat-grid-tile-footer>
+          </ng-template>
+
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+
+  </mat-tab>
+
+  <!-- Tab for images of the person -->
+  <mat-tab label="Imagens" *ngIf="person.images.profiles.length > 0">
+    <mat-grid-list cols="4" gutterSize="5px" rowHeight="400px" *ngIf="person.images.profiles">
+      <mat-grid-tile *ngFor="let image of person.images.profiles">
+        <mat-card class="person">
+
+          <!-- Profile Image -->
+          <a href="{{url_images}}{{image.file_path}}" target="_blank">
+            <img mat-card-image src="{{url_images}}{{image.file_path}}">
+          </a>
+
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </mat-tab>
+
+</mat-tab-group>

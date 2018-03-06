@@ -1,0 +1,300 @@
+<mat-tab-group [(selectedIndex)]='tabIndex' class="Tabs" *ngIf="tvShow">
+
+  <!-- Tab for general details of the show -->
+  <mat-tab label="Geral">
+    <div class="custom">
+      <div class="single">
+        <section class="images">
+          <div class="poster">
+            <div class="image_content">
+
+              <!-- Poster image -->
+              <div *ngIf="tvShow.poster_path; then posterTrue else posterFalse"></div>
+
+              <ng-template #posterTrue>
+                <img class="image" src="{{url_image_poster}}{{tvShow.poster_path}}" alt="{{tvShow.name}} poster image">
+              </ng-template>
+
+              <ng-template #posterFalse>
+                <img class="image" src="assets/no-poster.jpg" alt="{{tvShow.name}} poster image">
+              </ng-template>
+
+            </div>
+          </div>
+          <div class="header">
+            <section class="info">
+
+              <!-- Show Name -->
+              <div class="movieTitle">
+                <span>
+                  <h2>{{tvShow.name}}</h2>
+                </span>
+              </div>
+
+              <!-- Firsts icons -->
+              <ul class="icons">
+
+                <!-- Vote -->
+                <li class="rate" *ngIf="tvShow.vote_average">
+                  <div><h3>{{tvShow.vote_average}}</h3></div>
+                  <div>
+                    <mat-icon class="tc-yellow-A100">Estrela</mat-icon>
+                  </div>
+                </li>
+
+                <!-- Trailer -->
+                <li class="single_icon" *ngIf="trustedDashboardUrl">
+                  <button mat-button (click)="openTrailer()">
+                    <mat-icon>play_arrow</mat-icon>
+                    Play Trailer
+                  </button>
+                </li>
+              </ul>
+
+              <!-- Genres -->
+              <mat-chip-list *ngFor="let genre of tvShow.genres" class="genres">
+                <mat-chip color="accent" selected="true">{{genre.name}}</mat-chip>
+              </mat-chip-list>
+
+              <!-- Overview -->
+              <div class="overview">
+                <h3>Visão geral</h3>
+
+                <div *ngIf="overviewlength(tvShow.overview.length); then overTrue else overFalse"></div>
+
+                <ng-template #overTrue>
+                  <div>
+                    <p>{{tvShow.overview | truncate:250}}
+                      <button mat-button (click)="openOverview()">Veja mais...</button>
+                    </p>
+                  </div>
+                </ng-template>
+
+                <ng-template #overFalse>
+                  <p>{{tvShow.overview}}</p>
+                </ng-template>
+
+
+                <!-- Created by -->
+                <h4 *ngIf="tvShow.created_by">Criado por:</h4>
+                <ul class="icons">
+                  <li class="single_icon" *ngFor="let creator of tvShow.created_by">
+                    <div>
+                      <mat-icon>person</mat-icon>
+                    </div>
+                    <div>
+                      {{creator.name}}
+                    </div>
+                  </li>
+                </ul>
+
+                <!-- Lasts icons -->
+                <ul class="icons">
+                  <li class="single_icon" *ngIf="tvShow.first_air_date">
+                    <div>
+                      <mat-icon>event</mat-icon>
+                    </div>
+                    <div class="text">First <br>Air <br>Date</div>
+                    <div>: {{tvShow.first_air_date}}</div>
+                  </li>
+
+                  <li class="single_icon" *ngIf="tvShow.number_of_seasons">
+                    <div>
+                      <mat-icon>movie</mat-icon>
+                    </div>
+                    <div class="text">Temporadas</div>
+                    <div>
+                      : {{tvShow.number_of_seasons}}
+                    </div>
+                  </li>
+                  <li class="single_icon" *ngIf="tvShow.number_of_episodes">
+                    <div>
+                      <mat-icon>local_movies</mat-icon>
+                    </div>
+                    <div class="text">Numero<br> Episodios</div>
+                    <div>
+                      : {{tvShow.number_of_episodes}}
+                    </div>
+                  </li>
+                </ul>
+                <ul class="icons">
+                  <li class="single_icon" *ngIf="tvShow.homepage">
+                    <div>
+                      <mat-icon>home</mat-icon>
+                    </div>
+                    <div class="text">Home <br>Page</div>
+                    <div>
+                      : <a href="{{tvShow.homepage}}">Pagina Oficial</a>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </div>
+  </mat-tab>
+
+  <!-- Tab for the cast of the show -->
+  <mat-tab label="Elenco" *ngIf="tvShow.credits.cast.length > 0">
+    <mat-grid-list cols="4" gutterSize="5px" rowHeight="390px">
+      <mat-grid-tile *ngFor="let person of tvShow.credits.cast">
+        <mat-card class="person">
+
+          <!-- Profile image of person -->
+          <div *ngIf="person.profile_path; then trueCast else falseCast"></div>
+
+          <!-- If the image is present in the API is used-->
+          <ng-template #trueCast>
+            <img mat-card-image
+                 routerLink="/person/{{person.id}}" src="{{url_image_profile}}{{person.profile_path}}"
+                 alt="{{person.name}} profile image">
+          </ng-template>
+
+          <!-- If the image isn't present in the API, then a local image is used-->
+          <ng-template #falseCast>
+            <img mat-card-image
+                 routerLink="/person/{{person.id}}" src="assets/no_avatar.png"
+                 alt="{{person.name}} profile image">
+          </ng-template>
+        </mat-card>
+
+        <!-- Person name and his or her character -->
+        <mat-grid-tile-footer>
+          {{person.name}}<br>
+          like {{person.character | truncate: 20}}
+        </mat-grid-tile-footer>
+
+      </mat-grid-tile>
+    </mat-grid-list>
+  </mat-tab>
+
+  <!-- Tab for the cast of the show -->
+  <mat-tab label="Equipe técnica" *ngIf="tvShow.credits.crew.length > 0">
+    <mat-grid-list cols="4" gutterSize="5px" rowHeight="400px">
+      <mat-grid-tile *ngFor="let person of tvShow.credits.crew">
+        <mat-card class="person">
+
+          <!-- Profile image of person -->
+          <div *ngIf="person.profile_path; then trueCrew else falseCrew"></div>
+
+          <!-- If the image is present in the API is used-->
+          <ng-template #trueCrew>
+            <img mat-card-image
+                 routerLink="/person/{{person.id}}" src="{{url_image_profile}}{{person.profile_path}}"
+                 alt="{{person.name}} profile image">
+          </ng-template>
+
+          <!-- If the image isn't present in the API, then a local image is used-->
+          <ng-template #falseCrew>
+            <img mat-card-image
+                 routerLink="/person/{{person.id}}" src="assets/no_avatar.png"
+                 alt="{{person.name}} profile image">
+          </ng-template>
+        </mat-card>
+
+        <!-- Person name and his or her participation in production -->
+        <mat-grid-tile-footer>
+          {{person.name}}<br>
+          {{person.department}}
+        </mat-grid-tile-footer>
+
+      </mat-grid-tile>
+    </mat-grid-list>
+  </mat-tab>
+
+  <!--  Tab to show the Images of the show -->
+  <mat-tab label="Imagens" *ngIf="tvShow.images">
+    <mat-tab-group>
+
+      <!-- Tab to show the backdrops images, href to its originak source -->
+      <mat-tab label="Backdrops" *ngIf="tvShow.images.backdrops.length > 0">
+        <mat-grid-list cols="3" gutterSize="5px" rowHeight="250px" *ngIf="tvShow.images.backdrops">
+          <mat-grid-tile *ngFor="let image of tvShow.images.backdrops">
+            <mat-card class="movie">
+              <a href="{{url_images}}{{image.file_path}}" target="_blank">
+                <img mat-card-image src="{{url_images}}{{image.file_path}}">
+              </a>
+            </mat-card>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </mat-tab>
+
+      <!-- Tab to show the poster images, href to its originak source -->
+      <mat-tab label="Posters" *ngIf="tvShow.images.posters.length > 0">
+        <mat-grid-list cols="4" gutterSize="5px" rowHeight="470px" *ngIf="tvShow.images.posters">
+          <mat-grid-tile *ngFor="let image of tvShow.images.posters">
+            <mat-card class="movie">
+              <a href="{{url_images}}{{image.file_path}}" target="_blank">
+                <img mat-card-image src="{{url_images}}{{image.file_path}}">
+              </a>
+            </mat-card>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-tab>
+
+  <!--  Tab to show the recommendation for this show -->
+  <mat-tab label="Recomendações" *ngIf="tvShow.recommendations.total_results > 0">
+
+    <mat-grid-list cols="4" gutterSize="5px" rowHeight="470px">
+
+      <!-- A tooltip is used to show the overview of the shows -->
+      <mat-grid-tile *ngFor="let show of tvShow.recommendations.results" matTooltip="{{show.overview}}"
+                     [matTooltipPosition]="position">
+        <mat-card class="movie">
+
+          <!-- Poster Image of Recommendation shows-->
+          <div *ngIf="show.poster_path; then trueRecommendation else falseRecommendation"></div>
+
+          <ng-template #trueRecommendation>
+            <img mat-card-image (click)="changeTab()" routerLink="/tv_show/{{show.id}}"
+                 src="{{url_image_poster}}{{show.poster_path}}">
+          </ng-template>
+
+          <ng-template #falseRecommendation>
+            <img mat-card-image (click)="changeTab()" routerLink="/tv_show/{{show.id}}" src="assets/no-poster.jpg">
+          </ng-template>
+
+        </mat-card>
+
+        <!-- Name of the show -->
+        <mat-grid-tile-footer>{{show.name}}</mat-grid-tile-footer>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </mat-tab>
+
+  <!--  Tab to show the movies similar to this-->
+  <mat-tab label="Series Similares" *ngIf="tvShow.similar.total_results > 0">
+
+    <mat-grid-list cols="4" gutterSize="5px" rowHeight="470px">
+
+      <!-- A tooltip is used to show the overview of the movies -->
+      <mat-grid-tile *ngFor="let show of tvShow.similar.results" matTooltip="{{show.overview}}"
+                     [matTooltipPosition]="position">
+        <mat-card class="movie">
+
+          <!-- Poster Image of Similar Movies-->
+          <div *ngIf="show.poster_path; then trueSimilar else falseSimilar"></div>
+
+          <ng-template #trueSimilar>
+            <img mat-card-image (click)="changeTab()" routerLink="/tv_show/{{show.id}}"
+                 src="{{url_image_poster}}{{show.poster_path}}">
+          </ng-template>
+
+          <ng-template #falseSimilar>
+            <img mat-card-image (click)="changeTab()" routerLink="/tv_show/{{show.id}}" src="assets/no-poster.jpg">
+          </ng-template>
+
+        </mat-card>
+
+        <!-- Title of the movies -->
+        <mat-grid-tile-footer>{{show.name}}</mat-grid-tile-footer>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </mat-tab>
+
+</mat-tab-group>

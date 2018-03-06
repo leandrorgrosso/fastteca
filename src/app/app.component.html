@@ -1,0 +1,66 @@
+<td-layout>
+  <td-navigation-drawer flex sidenavTitle="Fast Teca" >
+    <div><p>Home</p></div>
+    <mat-divider></mat-divider>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/home"><mat-icon>home</mat-icon>Home</a>
+    </mat-nav-list>
+    <p>Filmes</p>
+    <mat-divider></mat-divider>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/now_playing/1"><mat-icon>movie</mat-icon>Assistindo agora</a>
+      <a mat-list-item routerLink="/popular/1"><mat-icon>thumb_up</mat-icon>Mais assistidos</a>
+      <a mat-list-item routerLink="/top_rated/1"><mat-icon>favorite</mat-icon>Top votados</a>
+      <a mat-list-item routerLink="/upcoming/1"><mat-icon>event</mat-icon>Proximos</a>
+    </mat-nav-list>
+    <p>Pessoas</p>
+    <mat-divider></mat-divider>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/people/1"><mat-icon>movie</mat-icon>Artistas</a>
+    </mat-nav-list>
+    <p>Series</p>
+    <mat-divider></mat-divider>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/tv_on_air/1"><mat-icon>live_tv</mat-icon>No ar</a>
+      <a mat-list-item routerLink="/tv_popular/1"><mat-icon>thumb_up</mat-icon>Popular</a>
+      <a mat-list-item routerLink="/tv_top_rated/1"><mat-icon>favorite</mat-icon>Top votados</a>
+    </mat-nav-list>
+  </td-navigation-drawer>
+  <td-layout-nav navigationRoute="/">
+    <div td-toolbar-content layout="row" layout-align="start center" flex>
+      <button mat-icon-button td-menu-button tdLayoutToggle>
+        <mat-icon>menu</mat-icon>
+      </button>
+      <!--<mat-icon (click)="lastVisit()" class="mat-icon-logo cursor-pointer" >arrow_back</mat-icon>-->
+      <span [routerLink]="['/']"><img src="../assets/logo.jpg" width="150" height="60" class="img-responsive img-rounded"></span>
+      <mat-icon [routerLink]="['/']" class="mat-icon-logo cursor-pointer">home</mat-icon>
+      <span [routerLink]="['/']" class="cursor-pointer">Fast Teca Filmes</span>
+      <span flex></span>
+
+      <!--Implementação caixa de Busca -->
+
+      <td-search-box backIcon="arrow_back" placeholder="Procurar..." [showUnderline]="true"
+                     [debounce]="1000" [alwaysVisible]="false"
+                     (search)="handleSearch($event)" (clear)="searchInputTerm = ''">
+      </td-search-box>
+    </div>
+
+    <td-layout-manage-list [opened]="false">
+      <mat-toolbar-row class="main">
+        <mat-nav-list>
+          <button mat-button routerLink="/home">Home</button>
+          <button mat-button routerLink="/now_playing/1">Assistindo agora</button>
+          <button mat-button routerLink="/popular/1">Mais assistidos</button>
+          <button mat-button routerLink="/top_rated/1">Top votados</button>
+          <button mat-button routerLink="/upcoming/1">Proximos</button>
+          <button mat-button routerLink="/people/1">Artistas</button>
+          <button mat-button routerLink="/tv_on_air/1">Series</button>
+          <button mat-button routerLink="/tv_popular/1">Popular series</button>
+          <button mat-button routerLink="/tv_top_rated/1">Top series</button>
+          <button mat-button><a href="https://www.fastshop.com.br/loja/" target="_blank">LOJA</a></button>
+        </mat-nav-list>
+      </mat-toolbar-row>
+      <router-outlet></router-outlet>
+    </td-layout-manage-list>
+  </td-layout-nav>
+</td-layout>
